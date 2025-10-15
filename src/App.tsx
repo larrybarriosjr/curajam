@@ -1,5 +1,9 @@
-function App() {
-  return <></>;
-}
+import "@mantine/carousel/styles.css";
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
-export default App;
+import { MantineProvider } from "@mantine/core";
+
+export default function App() {
+  return <MantineProvider></MantineProvider>;
+}
