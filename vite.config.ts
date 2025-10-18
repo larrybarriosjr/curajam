@@ -1,4 +1,5 @@
 import { biomePlugin as biome } from "@pbr1111/vite-plugin-biome"
+import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig, loadEnv } from "vite"
 
@@ -7,7 +8,14 @@ export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "")
 
 	return {
-		plugins: [react(), biome()],
+		plugins: [
+			tanstackRouter({
+				autoCodeSplitting: true,
+				target: "react",
+			}),
+			react(),
+			biome(),
+		],
 		server: {
 			open: true,
 			proxy: {
