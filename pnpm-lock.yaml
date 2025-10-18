@@ -45,6 +45,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.2.6
         version: 2.2.6
+      '@pbr1111/vite-plugin-biome':
+        specifier: ^1.1.3
+        version: 1.1.3(@biomejs/biome@2.2.6)(rolldown-vite@7.1.14(@types/node@24.7.2)(esbuild@0.25.4)(sugarss@5.0.1(postcss@8.5.6)))
       '@types/node':
         specifier: ^24.6.0
         version: 24.7.2
@@ -78,9 +81,6 @@ importers:
       vite:
         specifier: npm:rolldown-vite@7.1.14
         version: rolldown-vite@7.1.14(@types/node@24.7.2)(esbuild@0.25.4)(sugarss@5.0.1(postcss@8.5.6))
-      vite-plugin-biome:
-        specifier: ^1.0.12
-        version: 1.0.12(@biomejs/biome@2.2.6)
       wrangler:
         specifier: ^4.43.0
         version: 4.43.0
@@ -635,6 +635,12 @@ packages:
 
   '@oxc-project/types@0.93.0':
     resolution: {integrity: sha512-yNtwmWZIBtJsMr5TEfoZFDxIWV6OdScOpza/f5YxbqUMJk+j6QX3Cf3jgZShGEFYWQJ5j9mJ6jM0tZHu2J9Yrg==}
+
+  '@pbr1111/vite-plugin-biome@1.1.3':
+    resolution: {integrity: sha512-0oZcMs3w57hWUgMAnqYh7wXtbSEg2N5umMwqqUynoKLvV5fk4QVdFpkF4fktdbxj13OzyZDSaw2U8fMgoeO/nA==}
+    peerDependencies:
+      '@biomejs/biome': '>=1'
+      vite: '>=4'
 
   '@poppinss/colors@4.1.5':
     resolution: {integrity: sha512-FvdDqtcRCtz6hThExcFOgW0cWX+xwSMWcRuQe5ZEb2m7cVQOAVZOIMt+/v9RxGiD9/OY16qJBXK4CVKWAPalBw==}
@@ -1397,11 +1403,6 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  vite-plugin-biome@1.0.12:
-    resolution: {integrity: sha512-/+fBi1S+UEYtTu361IXQLZB8cSV/z4WoyK9cp/Dd1hHT6wGnFb+4Wcjwog3Y7HSUqNJbCdFWTYTyX4hwyO2iBg==}
-    peerDependencies:
-      '@biomejs/biome': ^1.8.0
-
   workerd@1.20251008.0:
     resolution: {integrity: sha512-HwaJmXO3M1r4S8x2ea2vy8Rw/y/38HRQuK/gNDRQ7w9cJXn6xSl1sIIqKCffULSUjul3wV3I3Nd/GfbmsRReEA==}
     engines: {node: '>=16'}
@@ -1899,6 +1900,11 @@ snapshots:
   '@oxc-project/runtime@0.92.0': {}
 
   '@oxc-project/types@0.93.0': {}
+
+  '@pbr1111/vite-plugin-biome@1.1.3(@biomejs/biome@2.2.6)(rolldown-vite@7.1.14(@types/node@24.7.2)(esbuild@0.25.4)(sugarss@5.0.1(postcss@8.5.6)))':
+    dependencies:
+      '@biomejs/biome': 2.2.6
+      vite: rolldown-vite@7.1.14(@types/node@24.7.2)(esbuild@0.25.4)(sugarss@5.0.1(postcss@8.5.6))
 
   '@poppinss/colors@4.1.5':
     dependencies:
@@ -2550,10 +2556,6 @@ snapshots:
       '@types/react': 19.2.2
 
   util-deprecate@1.0.2: {}
-
-  vite-plugin-biome@1.0.12(@biomejs/biome@2.2.6):
-    dependencies:
-      '@biomejs/biome': 2.2.6
 
   workerd@1.20251008.0:
     optionalDependencies:
