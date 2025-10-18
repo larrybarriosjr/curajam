@@ -1,0 +1,28 @@
+{
+	"autokill": true,
+	"autorun": true,
+	"terminals": [
+		{
+			"command": "pnpm run dev:api",
+			"description": "API server",
+			"icon": "server",
+			"name": "api",
+			"open": true,
+			"recycle": false
+		},
+		{
+			"commands": ["pnpx wait-on tcp:4289", "pnpm run dev:web"],
+			"description": "UI server",
+			"icon": "device-desktop",
+			"name": "web",
+			"open": true,
+			"recycle": false
+		},
+		{
+			"description": "Open free terminal",
+			"focus": true,
+			"icon": "terminal",
+			"recycle": false
+		}
+	]
+}
