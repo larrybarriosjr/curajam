@@ -13,7 +13,8 @@
 		"includes": ["**/*.ts", "**/*.tsx", "**/*.json", "!*.json"]
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": false,
+		"includes": ["**", "!.wrangler"]
 	},
 	"formatter": {
 		"attributePosition": "auto",

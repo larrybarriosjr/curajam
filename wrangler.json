@@ -1,0 +1,7 @@
+{
+	"$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+	"compatibility_date": "2025-10-18",
+	"name": "curajam",
+	"pages_build_output_dir": "./dist",
+	"dev": { "port": 4289 }
+}
