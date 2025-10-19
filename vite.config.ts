@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				app: path.resolve(__dirname, "./src/app"),
 				assets: path.resolve(__dirname, "./src/assets"),
+				hooks: path.resolve(__dirname, "./src/hooks"),
 			},
 		},
 		server: {
