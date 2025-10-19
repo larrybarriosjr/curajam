@@ -6,10 +6,10 @@ export function IconBackspace(props: React.SVGProps<SVGSVGElement>) {
 				fill="currentColor"
 			/>
 			<path
-				clip-rule="evenodd"
+				clipRule="evenodd"
 				d="M8.58579 19L2.29289 12.7071C1.90237 12.3166 1.90237 11.6834 2.29289 11.2929L8.58579 5H22.5857V19H8.58579ZM9.41421 7L4.41421 12L9.41421 17H20.5857V7H9.41421Z"
 				fill="currentColor"
-				fill-rule="evenodd"
+				fillRule="evenodd"
 			/>
 		</svg>
 	)
