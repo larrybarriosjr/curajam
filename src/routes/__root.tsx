@@ -8,6 +8,7 @@ import { ModalsProvider } from "@mantine/modals"
 import { Notifications } from "@mantine/notifications"
 import { createRootRoute, Outlet } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+import { theme } from "app"
 
 export const Route = createRootRoute({
 	component: RootLayout,
@@ -15,7 +16,7 @@ export const Route = createRootRoute({
 
 function RootLayout() {
 	return (
-		<MantineProvider>
+		<MantineProvider theme={theme}>
 			<ModalsProvider>
 				<Notifications />
 

@@ -1,0 +1,6 @@
+@font-face {
+	font-family: "Livvic";
+	src:
+		local("Livvic-Black"),
+		url("./Livvic/Livvic-Black.ttf") format("truetype");
+}

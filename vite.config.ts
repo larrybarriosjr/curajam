@@ -1,3 +1,4 @@
+import path from "node:path"
 import { biomePlugin as biome } from "@pbr1111/vite-plugin-biome"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
@@ -16,6 +17,12 @@ export default defineConfig(({ mode }) => {
 			react(),
 			biome(),
 		],
+		resolve: {
+			alias: {
+				app: path.resolve(__dirname, "./src/app"),
+				assets: path.resolve(__dirname, "./src/assets"),
+			},
+		},
 		server: {
 			open: true,
 			proxy: {
