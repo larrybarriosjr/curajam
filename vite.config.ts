@@ -2,6 +2,7 @@ import path from "node:path"
 import { biomePlugin as biome } from "@pbr1111/vite-plugin-biome"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
+import sonda from "sonda/vite"
 import { defineConfig, loadEnv } from "vite"
 
 // https://vite.dev/config/
@@ -9,6 +10,22 @@ export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "")
 
 	return {
+		build: {
+			rolldownOptions: {
+				output: {
+					advancedChunks: {
+						groups: [
+							{ name: "react-dom", test: /node_modules\/react-dom/ },
+							{ name: "react", test: /node_modules\/react/ },
+							{ name: "mantine", test: /node_modules\/@mantine/ },
+							{ name: "zod", test: /node_modules\/zod/ },
+							{ name: "pnpm", test: /node_modules\/.pnpm/ },
+						],
+					},
+				},
+			},
+			sourcemap: true,
+		},
 		plugins: [
 			tanstackRouter({
 				autoCodeSplitting: true,
@@ -17,6 +34,7 @@ export default defineConfig(({ mode }) => {
 			}),
 			react(),
 			biome(),
+			sonda(),
 		],
 		resolve: {
 			alias: {

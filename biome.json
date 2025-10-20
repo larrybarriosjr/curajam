@@ -14,7 +14,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!.wrangler", "!**/routeTree.gen.ts"]
+		"includes": ["**", "!dist", "!.wrangler", "!**/routeTree.gen.ts", "!functions/types.d.ts"]
 	},
 	"formatter": {
 		"attributePosition": "auto",
