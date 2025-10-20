@@ -1,8 +1,0 @@
-{
-	"compilerOptions": {
-		"lib": ["esnext"],
-		"module": "esnext",
-		"target": "esnext",
-		"types": ["./types.d.ts"]
-	}
-}

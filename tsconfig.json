@@ -1,5 +1,4 @@
 {
 	"files": [],
-	"exclude": ["functions/**/*"],
 	"references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }
