@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev:web": "vite",
 		"dev:api": "wrangler pages dev functions",
+		"api:types": "wrangler types --path='./functions/types.d.ts'",
 		"build": "tsc -b && vite build",
 		"lint": "biome lint .",
 		"preview": "vite preview"
