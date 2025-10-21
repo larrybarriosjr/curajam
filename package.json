@@ -9,7 +9,7 @@
 		"lint": "biome lint .",
 		"preview": "vc",
 		"deploy": "vc --prod",
-		"env": "vc env pull"
+		"update:env": "vc env pull"
 	},
 	"dependencies": {
 		"@mantine/carousel": "^8.3.5",
@@ -22,6 +22,7 @@
 		"@tanstack/react-router-devtools": "^1.133.13",
 		"embla-carousel": "^8.6.0",
 		"embla-carousel-react": "^8.6.0",
+		"ky": "^1.12.0",
 		"mantine-form-zod-resolver": "^1.3.0",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
