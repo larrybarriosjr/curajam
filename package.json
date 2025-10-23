@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "NODE_OPTIONS='--no-deprecation' vc dev",
 		"build": "tsc -b && vite build",
-		"lint": "biome lint .",
+		"lint": "biome check .",
 		"preview": "vc",
 		"deploy": "vc --prod",
 		"update:env": "vc env pull",

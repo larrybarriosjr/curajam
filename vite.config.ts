@@ -25,7 +25,10 @@ export default defineConfig({
 		sourcemap: true,
 	},
 	plugins: [
-		sonda({ outputDir: "__local__/.sonda" }),
+		sonda({
+			gzip: true,
+			outputDir: "__local__/.sonda",
+		}),
 		tanstackRouter({
 			autoCodeSplitting: true,
 			generatedRouteTree: "./src/app/routeTree.gen.ts",
