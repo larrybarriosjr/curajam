@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vc dev",
+		"dev": "NODE_OPTIONS='--no-deprecation' vc dev",
 		"build": "tsc -b && vite build",
 		"lint": "biome lint .",
 		"preview": "vc",
@@ -58,6 +58,9 @@
 			"undici@>=4.5.0 <5.28.5": ">=5.28.5",
 			"esbuild@<=0.24.2": ">=0.25.0",
 			"undici@<5.29.0": ">=5.29.0"
+		},
+		"allowedDeprecatedVersions": {
+			"path-match": "*"
 		}
 	}
 }
