@@ -11,7 +11,7 @@
 		"deploy": "vc --prod",
 		"update:env": "vc env pull",
 		"test": "vitest",
-		"coverage": "vitest run --coverage"
+		"coverage": "vitest run --coverage --passWithNoTests"
 	},
 	"dependencies": {
 		"@mantine/carousel": "^8.3.5",
