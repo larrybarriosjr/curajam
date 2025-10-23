@@ -14,7 +14,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!dist", "!coverage", "!**/routeTree.gen.ts", "!**/____.*"]
+		"includes": ["**", "!.*", "!__local__*", "!dist", "!coverage", "!**/routeTree.gen.ts", "!**/____.*"]
 	},
 	"formatter": {
 		"attributePosition": "auto",
