@@ -7,9 +7,6 @@ on:
 permissions: read-all
 jobs:
   dispatch:
-    if: >
-      github.event.issue.pull_request != '' &&
-      startsWith(github.event.comment.body, '/version')
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch /version (workflow mode, named args)
