@@ -14,7 +14,16 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!.*", "!__local__*", "!dist", "!coverage", "!**/routeTree.gen.ts", "!**/____.*"]
+		"includes": [
+			"**",
+			"!.*",
+			"!__local__*",
+			"!dist",
+			"!coverage",
+			"!**/routeTree.gen.ts",
+			"!package.json",
+			"!**/____.*"
+		]
 	},
 	"formatter": {
 		"attributePosition": "auto",
