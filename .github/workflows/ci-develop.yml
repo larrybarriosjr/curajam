@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   lint:
-    name: Lint & Typecheck
+    name: 1 - Lint & Typecheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
       - run: pnpm tsc --noEmit
 
   test:
-    name: Test & Coverage
+    name: 2 - Test & Coverage
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -50,7 +50,7 @@ jobs:
           destination_dir: reports/${{ github.sha }}
 
   build:
-    name: Build & Analyze
+    name: 3 - Build & Analyze
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -71,7 +71,7 @@ jobs:
           destination_dir: reports/${{ github.sha }}
 
   comment:
-    name: Report Links Comment
+    name: 4 - Report Links Comment
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'pull_request'
