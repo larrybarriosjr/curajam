@@ -145,12 +145,12 @@ jobs:
             // GitHub links
             const branchUrl = `https://github.com/${owner}/${repo}/tree/${releaseBranch}`;
             const tagUrl = `https://github.com/${owner}/${repo}/tree/${tag}`;
-            const commitSha = context.payload.pull_request?.merge_commit_sha || context.sha;
+            const commitSha = context.payload.pull_request?.merge_commit_sha ?? context.sha;
             const commitUrl = `https://github.com/${owner}/${repo}/commit/${commitSha}`;
 
             // Shields-style badges
             const badge = (label, message, color) =>
-              `!${label}: ${message}}-${encodeURIComponent(message)}-${color}?style=for-the-badge)`;
+              `![Static Badge](https://img.shields.io/badge/${label}-${message}-${color}?style=for-the-badge)`;
 
             const badges = [
              `[${badge('release', tag, '34D058')}`,
@@ -182,7 +182,7 @@ jobs:
 
             - Triggered by: @\${context.actor}
             - Workflow: \`${context.workflow}\`
-            - Run: [#\${context.runNumber}](\${context.serverUrl}/\${context.repo.owner}/\${context.repo.repo}/actions/r   _If you re-run the workflow, this comment will update automatically._ ✨
+            - Run: [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}   _If you re-run the workflow, this comment will update automatically._ ✨
             `;
 
             // Find existing marker comment
