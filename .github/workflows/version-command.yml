@@ -32,10 +32,74 @@ jobs:
         run: |
           npm version ${{ github.event.client_payload.bump }} --no-git-tag-version -m "chore(version): %s"
 
-      - name: Commit & push
+      - name: Commit & push chore(version)
         run: |
-          git config user.name "github-actions[bot]"
+          set -e
+          git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json || true
-          git commit -m "chore(version)" || echo "No changes"
-          git push origin HEAD
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git commit -m "chore(version): v${NEW_VERSION}" || echo "No changes to commit"
+          git push origin HEAD || echo "Nothing to push"
+
+      - name: Read bumped version
+        id: version_post
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Version result (update PR comment)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.RELEASE_PAT }}
+          script: |
+            const owner    = context.repo.owner;
+            const repo     = context.repo.repo;
+
+            const prNumber = context.payload.client_payload?.pr_number;
+            if (!prNumber) {
+              core.setFailed('Missing pr_number in repository_dispatch.client_payload');
+              return;
+            }
+
+            const MARKER  = '<!-- pr-version-marker -->';
+            const version = '${{ steps.version_post.outputs.version }}';
+            const tag     = `v${version}`;
+
+            const ackId = context.payload.client_payload?.ack_comment_id;
+
+            const body = `${MARKER}
+            ✅ **Version:** \`${tag}\`
+            _Requested by_ @${context.actor}`;
+
+            if (ackId) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: ackId, body
+              });
+            } else {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner, repo, issue_number: prNumber, per_page: 100
+              });
+              const existing = comments.find(
+                c => c.user?.type === 'Bot' && (c.body || '').includes(MARKER)
+              );
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: existing.id, body
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: prNumber, body
+                });
+              }
+            }
+
+            const originalCommentId = context.payload.client_payload?.comment_id;
+            if (originalCommentId) {
+              await github.rest.reactions.createForIssueComment({
+                owner, repo,
+                comment_id: originalCommentId,
+                content: 'hooray'
+              });
+            }
