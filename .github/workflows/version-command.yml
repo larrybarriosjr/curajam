@@ -9,7 +9,11 @@ on:
         type: choice
         options: [patch, minor, major]
       ref:
-        description: "Target ref (provided by dispatcher)"
+        description: "The branch this workflow file runs from (dispatcher supplied)"
+        required: true
+        type: string
+      target:
+        description: "PR head branch to update (dispatcher supplied)"
         required: true
         type: string
 
@@ -20,10 +24,10 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout target ref (use PAT so push re-triggers CI)
+      - name: Checkout PR head branch (use PAT so push re-triggers CI)
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.target }}
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PAT }}
 
@@ -38,15 +42,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Apply npm version bump (no tag)
-        id: apply
         run: |
           npm version ${{ inputs.bump }} --no-git-tag-version -m "chore(version): %s"
-          echo "new=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
 
       - name: Commit & push
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json || true
-          git commit -m "chore(version): ${{ steps.apply.outputs.new }}" || echo "No changes"
+          git commit -m "chore(version)" || echo "No changes"
           git push origin HEAD

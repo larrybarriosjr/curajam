@@ -19,4 +19,5 @@ jobs:
             version
           dispatch-type: workflow
           static-args: |
-            ref=${{ github.event.issue.pull_request.head.ref }}
+            ref=${{ github.event.repository.default_branch }}
+            target=${{ github.event.issue.pull_request.head.ref }}
