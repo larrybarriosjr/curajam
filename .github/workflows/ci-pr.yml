@@ -57,14 +57,14 @@ jobs:
           publish_dir: ./__local__
           destination_dir: reports/${{ github.sha }}
 
-      - name: Publish Coverage Report Check
+      - name: Publish Test Coverage Check
         uses: actions/github-script@v7
         with:
           script: |
             await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: "Coverage Report",
+              name: "Test Coverage Report",
               head_sha: context.sha,
               status: "completed",
               conclusion: "success",
@@ -78,7 +78,7 @@ jobs:
             await github.rest.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: "Bundle Analysis",
+              name: "Bundle Analysis Report",
               head_sha: context.sha,
               status: "completed",
               conclusion: "success",
@@ -96,8 +96,8 @@ jobs:
             const body = `
             📝 **Reports for commit \`${context.sha.slice(0,7)}\`**
 
-            - [Coverage Report](${coverageUrl})
-            - [Bundle Analysis](${bundleUrl})
+            - [Test Coverage Report](${coverageUrl})
+            - [Bundle Analysis Report](${bundleUrl})
             `
 
             const { data: comments } = await github.rest.issues.listComments({
