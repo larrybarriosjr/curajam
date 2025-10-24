@@ -1,0 +1,118 @@
+name: CI (Pull Requests)
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.JS ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm tsc --noEmit
+
+      - name: Run tests with coverage
+        run: pnpm coverage
+
+      - name: Build
+        run: pnpm build
+
+      - name: Deploy commit reports to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./__local__
+          destination_dir: reports/${{ github.sha }}
+
+      - name: Publish Coverage Report Check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Coverage Report",
+              head_sha: context.sha,
+              status: "completed",
+              conclusion: "success",
+              details_url: `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.sha}/coverage/index.html`
+            })
+
+      - name: Publish Bundle Analysis Check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Bundle Analysis",
+              head_sha: context.sha,
+              status: "completed",
+              conclusion: "success",
+              details_url: `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.sha}/sonda/sonda_0.html`
+            })
+
+      - name: Comment report links on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const coverageUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.sha}/coverage/index.html`
+            const bundleUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.sha}/sonda/sonda_0.html`
+
+            const body = `
+            📝 **Reports for commit \`${context.sha.slice(0,7)}\`**
+
+            - [Coverage Report](${coverageUrl})
+            - [Bundle Analysis](${bundleUrl})
+            `
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+
+            const existing = comments.find(c => c.user.type === "Bot" && c.body.includes("Reports for commit"))
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              })
+            }
