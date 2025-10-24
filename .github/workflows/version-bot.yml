@@ -17,7 +17,7 @@ jobs:
       - name: Dispatch /version (workflow mode, named args)
         uses: peter-evans/slash-command-dispatch@v4
         with:
-          token: ${{ secrets.RELEASE_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           permission: write
           issue-type: pull-request
           commands: |
