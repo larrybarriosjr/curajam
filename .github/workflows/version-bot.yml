@@ -31,6 +31,7 @@ jobs:
       - name: Acknowledge "/version"
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.RELEASE_PAT }}
           script: |
             const owner = context.repo.owner;
             const repo  = context.repo.repo;
@@ -63,6 +64,7 @@ jobs:
       - name: Version result
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.RELEASE_PAT }}
           script: |
             const owner = context.repo.owner;
             const repo  = context.repo.repo;
