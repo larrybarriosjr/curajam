@@ -1,0 +1,26 @@
+name: Version Bot
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions: read-all
+jobs:
+  dispatch:
+    if: >
+      github.event.issue.pull_request != '' &&
+      startsWith(github.event.comment.body, '/version')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch /version (workflow mode, named args)
+        uses: peter-evans/slash-command-dispatch@v4
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          permission: write
+          issue-type: pull-request
+          commands: |
+            version
+          dispatch-type: workflow
+          reactions: true
+          static-args: |
+            ref=${{ github.event.issue.pull_request.head.ref }}
