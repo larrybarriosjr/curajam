@@ -9,6 +9,11 @@ jobs:
   dispatch:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug Info
+        run: |
+          echo "Actor: ${{ github.actor }}"
+          curl -H "Authorization: token ${{ secrets.RELEASE_PAT }}" https://api.github.com/user
+
       - name: Dispatch /version (workflow mode, named args)
         uses: peter-evans/slash-command-dispatch@v4
         with:
