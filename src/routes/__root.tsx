@@ -1,28 +1,19 @@
-import "@mantine/core/styles.css"
-// @mantine/core must be imported first
-import "@mantine/carousel/styles.css"
-import "@mantine/notifications/styles.css"
-
-import { MantineProvider } from "@mantine/core"
-import { ModalsProvider } from "@mantine/modals"
-import { Notifications } from "@mantine/notifications"
-import { createRootRoute, Outlet } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+import { createRootRoute, Link, Outlet } from "@tanstack/react-router"
+import { Provider } from "app"
 
 export const Route = createRootRoute({
 	component: RootLayout,
+	notFoundComponent: NotFound,
 })
+
+function NotFound() {
+	return <Link to="/app">Go to App</Link>
+}
 
 function RootLayout() {
 	return (
-		<MantineProvider>
-			<ModalsProvider>
-				<Notifications />
-
-				<Outlet />
-
-				<TanStackRouterDevtools />
-			</ModalsProvider>
-		</MantineProvider>
+		<Provider>
+			<Outlet />
+		</Provider>
 	)
 }
