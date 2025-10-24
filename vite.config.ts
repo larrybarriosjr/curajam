@@ -27,7 +27,7 @@ export default defineConfig({
 	plugins: [
 		sonda({
 			gzip: true,
-			outputDir: "__local__/.sonda",
+			outputDir: "__local__/sonda",
 		}),
 		tanstackRouter({
 			autoCodeSplitting: true,
