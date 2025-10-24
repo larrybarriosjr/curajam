@@ -88,7 +88,7 @@ jobs:
             }
 
   release:
-    name: 3 - Create Release Tag & Branch
+    name: 3 - Release
     runs-on: ubuntu-latest
     needs: test
     permissions:
@@ -118,3 +118,90 @@ jobs:
         run: |
           git tag v${{ steps.version.outputs.version }}
           git push origin v${{ steps.version.outputs.version }}
+
+  success:
+    name: 4 - Success
+    runs-on: ubuntu-latest
+    needs: [comment, release]
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.issue.number;
+
+            const version = '${{ needs.release.outputs.version }}';
+            const tag = `v${version}`;
+            const releaseBranch = `release/v${version}`;
+
+            const baseUrl = `https://${owner}.github.io/${repo}/reports/stable`;
+            const coverageUrl = `${baseUrl}/coverage/index.html`;
+            const bundleUrl = `${baseUrl}/bundle/sonda_0.html`;
+
+            // GitHub links
+            const branchUrl = `https://github.com/${owner}/${repo}/tree/${releaseBranch}`;
+            const tagUrl = `https://github.com/${owner}/${repo}/tree/${tag}`;
+            const commitSha = context.payload.pull_request?.merge_commit_sha || context.sha;
+            const commitUrl = `https://github.com/${owner}/${repo}/commit/${commitSha}`;
+
+            // Shields-style badges
+            const badge = (label, message, color) =>
+              `!${label}: ${message}}-${encodeURIComponent(message)}-${color}?style=for-the-badge)`;
+
+            const badges = [
+             `[${badge('release', tag, '34D058')}`,
+              `[${badge('branch', releaseBranch, '1E90F')}`,
+              `[${badge('commit', commitSha.slice(0,7),'6f42c1')}`,
+             `[${badge('status', 'success', '2ea043')}`
+            ].join(' ');
+
+            const timestamp = new Date().toLocaleString('en-US', { timeZone: 'UTC', hour12: false }) + ' UTC';
+
+            // Flashy content with a persistent marker (so we can update)
+            const MARKER = '<!-- release-comment-marker -->';
+            const body = `
+            ${MARKER}
+            ## 🚀 **Release \`${tag}\` is live!**  🎉
+            ${badges}
+
+            > This pull request was merged and promoted to **\`${releaseBranch}\`** with tag **\`${tag}\`**.
+
+            **Quick links**
+            - 📦 **Release branch:** \`${releaseBranch}\`
+            - 🏷️ **Tag:** \`${tag}\`
+            - 🧪 **Coverage report:** [Open](${coverageUrl})
+            - 📊 **Bundle analysis:** [Open](${bundleUrl})
+            - 🔗 **Merge commit:** \`${commitSha.slice(0,7)}\`
+
+            <details>
+            <summary>ℹ️ Details</summary>
+
+            - Triggered by: @\${context.actor}
+            - Workflow: \`${context.workflow}\`
+            - Run: [#\${context.runNumber}](\${context.serverUrl}/\${context.repo.owner}/\${context.repo.repo}/actions/r   _If you re-run the workflow, this comment will update automatically._ ✨
+            `;
+
+            // Find existing marker comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 100
+            });
+
+            const existing = comments.find(c =>
+              c.user?.type === 'Bot' &&
+              typeof c.body === 'string' &&
+              c.body.includes(MARKER)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber, body
+              });
+            }
