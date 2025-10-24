@@ -1,17 +1,8 @@
 name: version-command
 
 on:
-  workflow_dispatch:
-    inputs:
-      bump:
-        description: "SemVer bump"
-        required: true
-        type: choice
-        options: [patch, minor, major]
-      ref:
-        description: "Target ref (provided by dispatcher)"
-        required: true
-        type: string
+  repository_dispatch:
+    types: [version-bump]
 
 permissions:
   contents: write
@@ -20,10 +11,10 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout target ref (use PAT so push re-triggers CI)
+      - name: Checkout PR head branch (use PAT so push re-triggers CI)
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ github.event.client_payload.target }}
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PAT }}
 
@@ -38,15 +29,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Apply npm version bump (no tag)
-        id: apply
         run: |
-          npm version ${{ inputs.bump }} --no-git-tag-version -m "chore(version): %s"
-          echo "new=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+          npm version ${{ github.event.client_payload.bump }} --no-git-tag-version -m "chore(version): %s"
 
       - name: Commit & push
         run: |
-          git config user.name  "github-actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json || true
-          git commit -m "chore(version): ${{ steps.apply.outputs.new }}" || echo "No changes"
+          git add package.json || true
+          git commit -m "chore(version)" || echo "No changes"
           git push origin HEAD

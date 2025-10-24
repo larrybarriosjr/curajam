@@ -4,23 +4,32 @@ on:
   issue_comment:
     types: [created]
 
-permissions: read-all
+permissions:
+  contents: read
+
 jobs:
   dispatch:
-    if: >
-      github.event.issue.pull_request != '' &&
-      startsWith(github.event.comment.body, '/version')
+    if: github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/version')
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch /version (workflow mode, named args)
-        uses: peter-evans/slash-command-dispatch@v4
-        with:
-          token: ${{ secrets.RELEASE_PAT }}
-          permission: write
-          issue-type: pull-request
-          commands: |
-            version
-          dispatch-type: workflow
-          reactions: true
-          static-args: |
-            ref=${{ github.event.issue.pull_request.head.ref }}
+      - name: Extract bump type from comment
+        id: extract
+        run: |
+          echo "bump=$(echo '${{ github.event.comment.body }}' | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+
+      - name: Trigger repository_dispatch
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.RELEASE_PAT }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d @- <<EOF
+          {
+            "event_type": "version-bump",
+            "client_payload": {
+              "bump": "${{ steps.extract.outputs.bump }}",
+              "ref": "${{ github.event.repository.default_branch }}",
+              "target": "${{ github.event.issue.pull_request.head.ref }}"
+            }
+          }
+          EOF
