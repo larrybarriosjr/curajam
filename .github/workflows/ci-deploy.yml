@@ -1,18 +1,16 @@
 name: CI
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
 
 permissions: read-all
 
-concurrency:
-  group: ci-main-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   test:
+    if: ${{ github.event.pull_request.merged == true }}
     name: 1 - Test & Build
     timeout-minutes: 20
     runs-on: ubuntu-latest
