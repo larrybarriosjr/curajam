@@ -1,21 +1,23 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches:
-      - develop
+      - main
 
 permissions: read-all
 
 concurrency:
-  group: ci-develop-${{ github.event.pull_request.number || github.ref }}
+  group: ci-main-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: 1 - Lint & Typecheck
-    timeout-minutes: 5
+  test:
+    name: 1 - Test & Build
+    timeout-minutes: 20
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -28,63 +30,24 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm tsc --noEmit
-
-  test:
-    name: 2 - Test & Coverage
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    needs: lint
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "pnpm"
-      - run: pnpm install --frozen-lockfile
       - run: pnpm coverage
+      - run: pnpm build
       - uses: peaceiris/actions-gh-pages@v4
-        if: ${{ !github.event.pull_request.head.repo.fork }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./__local__/coverage
-          destination_dir: reports/${{ github.sha }}/coverage
-
-  build:
-    name: 3 - Build & Analyze
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    needs: test
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "pnpm"
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+          destination_dir: reports/stable/coverage
       - uses: peaceiris/actions-gh-pages@v4
-        if: ${{ !github.event.pull_request.head.repo.fork }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./__local__/bundle
-          destination_dir: reports/${{ github.sha }}/bundle
+          destination_dir: reports/stable/bundle
 
   comment:
-    name: 4 - Report Links Comment
+    name: 2 - Report Links Comment
     timeout-minutes: 1
     runs-on: ubuntu-latest
-    needs: build
-    if: ${{ github.event_name == 'pull_request' || !github.event.pull_request.head.repo.fork }}
+    needs: test
     permissions:
       issues: write
       pull-requests: write
@@ -92,13 +55,12 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const sha = context.sha.slice(0,7)
-            const baseUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.sha}`
+            const baseUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/stable`
             const coverageUrl = `${baseUrl}/coverage/index.html`
             const bundleUrl = `${baseUrl}/bundle/sonda_0.html`
 
             const body = `
-            📝 **Reports for commit \`${sha}\`**
+            📝 **Reports for commit \`latest-stable\`**
 
             - [Coverage Report](${coverageUrl})
             - [Bundle Analysis](${bundleUrl})
