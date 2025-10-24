@@ -18,7 +18,5 @@ jobs:
           commands: |
             version
           dispatch-type: workflow
-          reaction-token: ${{ secrets.GITHUB_TOKEN }}
-          reactions: true
           static-args: |
             ref=${{ github.event.issue.pull_request.head.ref }}
