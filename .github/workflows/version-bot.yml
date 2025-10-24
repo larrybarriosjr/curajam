@@ -61,41 +61,6 @@ jobs:
               await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
             }
 
-      - name: Version result
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.RELEASE_PAT }}
-          script: |
-            const owner = context.repo.owner;
-            const repo  = context.repo.repo;
-            const prNumber = context.issue.number;
-
-            const MARKER  = '<!-- pr-version-marker -->';
-            const version = '${{ steps.version.outputs.version }}';
-            const tag     = `v${version}`;
-
-            const body = `${MARKER}
-            ✅ **Version:** \`${tag}\`
-            _Requested by_ @${context.actor}`;
-
-            const { data: comments } = await github.rest.issues.listComments({
-              owner, repo, issue_number: prNumber, per_page: 100
-            });
-            const existing = comments.find(c => c.user?.type === 'Bot' && (c.body || '').includes(MARKER));
-
-            if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-            } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
-            }
-
-            // 🎉 Optional: add a success reaction to the original /version comment
-            await github.rest.reactions.createForIssueComment({
-              owner, repo,
-              comment_id: context.payload.comment.id,
-              content: 'hooray'
-            });
-
       - name: Trigger repository_dispatch
         run: |
           curl -X POST \
