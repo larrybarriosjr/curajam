@@ -33,6 +33,8 @@ jobs:
     name: 2 - Test & Coverage
     runs-on: ubuntu-latest
     needs: lint
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
