@@ -12,76 +12,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  version:
-    name: 0 - Version Check
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    timeout-minutes: 5
-    steps:
-      - name: Checkout PR head
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          path: head
-          fetch-depth: 0
-
-      - name: Checkout base (main)
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          path: base
-          fetch-depth: 0
-
-      - name: Detect version bump
-        id: detect
-        run: |
-          set -euo pipefail
-          head_ver=$(jq -r '.version' head/package.json)
-          base_ver=$(jq -r '.version' base/package.json)
-          echo "head=$head_ver base=$base_ver"
-          if [ "$head_ver" != "$base_ver" ]; then
-            echo "bumped=true" >> $GITHUB_OUTPUT
-          else
-            echo "bumped=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Comment guidance when missing
-        if: steps.detect.outputs.bumped == 'false'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const owner = context.repo.owner, repo = context.repo.repo, issue_number = context.issue.number;
-            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number });
-            const marker = "Version bump required. Use `/version`";
-            const exists = comments.find(c =>
-              c.user?.type === "Bot" && c.body?.includes(marker)
-            );
-            const body =
-              `> **Version bump required. Use \`/version\`**  \n\n` +
-              `This PR does not change \`package.json\` **version**.\n\n` +
-              `Comment one of the following on this PR to bump automatically:\n` +
-              `- \`/version patch\`\n- \`/version minor\`\n- \`/version major\`\n\n` +
-              `_Tip:_ The \`/version\` bot updates the PR branch and re-triggers CI.`;
-            if (!exists) {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-            }
-
-      - name: Fail if not bumped (blocks other checks)
-        if: steps.detect.outputs.bumped == 'false'
-        run: |
-          echo "Version not bumped. See guidance comment above."
-          exit 1
-
-      - name: OK - version bumped
-        if: steps.detect.outputs.bumped == 'true'
-        run: echo "Version bump detected; proceed with downstream jobs."
-
   test:
     name: 1 - Test & Build
     timeout-minutes: 20
     runs-on: ubuntu-latest
-    needs: version
     permissions:
       contents: write
     steps:
