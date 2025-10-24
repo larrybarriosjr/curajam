@@ -46,8 +46,8 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./__local__
-          destination_dir: reports/${{ github.sha }}
+          publish_dir: ./__local__/coverage
+          destination_dir: reports/${{ github.sha }}/coverage
 
   build:
     name: 3 - Build & Analyze
@@ -67,8 +67,8 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./__local__
-          destination_dir: reports/${{ github.sha }}
+          publish_dir: ./__local__/bundle
+          destination_dir: reports/${{ github.sha }}/bundle
 
   comment:
     name: 4 - Report Links Comment
@@ -82,7 +82,7 @@ jobs:
             const sha = context.sha.slice(0,7)
             const baseUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.sha}`
             const coverageUrl = `${baseUrl}/coverage/index.html`
-            const bundleUrl = `${baseUrl}/sonda/sonda_0.html`
+            const bundleUrl = `${baseUrl}/bundle/sonda_0.html`
 
             const body = `
             📝 **Reports for commit \`${sha}\`**
