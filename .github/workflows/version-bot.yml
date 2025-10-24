@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: pr-version-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
 jobs:
   dispatch:
     if: github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/version')
@@ -16,6 +20,38 @@ jobs:
         id: extract
         run: |
           echo "bump=$(echo '${{ github.event.comment.body }}' | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+
+      - name: Read package version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Acknowledge /version (create comment)
+        id: ack
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            <!-- pr-version-marker -->
+            ⏳ **Version bot is running…**
+            _Triggered by_ @${{ github.actor }}
+          reactions: eyes
+
+      - name: Update comment with version result
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.ack.outputs.comment-id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          edit-mode: replace
+          body: |
+            <!-- pr-version-marker -->
+            ✅ **Version:** `v${{ steps.version.outputs.version }}`
+            _Requested by_ @${{ github.actor }}
+          reactions: |
+            hooray
+            rocket
 
       - name: Trigger repository_dispatch
         run: |
