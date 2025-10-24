@@ -1,0 +1,1 @@
+export { LogoCurajam } from "./LogoCurajam"

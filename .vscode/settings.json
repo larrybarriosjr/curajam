@@ -4,7 +4,7 @@
 		"source.fixAll.biome": "always",
 		"source.fixAll.sortJSON": "always",
 		"source.organizeImports.biome": "always",
-		"source.removeUnused.ts": "always"
+		"source.removeUnusedImports": "always"
 	},
 	"editor.defaultFormatter": "biomejs.biome",
 	"files.readonlyInclude": {

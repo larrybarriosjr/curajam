@@ -14,7 +14,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!.wrangler", "!**/routeTree.gen.ts"]
+		"includes": ["**", "!.*", "!__local__*", "!dist", "!coverage", "!**/routeTree.gen.ts", "!**/____.*"]
 	},
 	"formatter": {
 		"attributePosition": "auto",
@@ -50,6 +50,10 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"recommended": true
+			},
 			"recommended": true
 		}
 	},
