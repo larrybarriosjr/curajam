@@ -1,21 +1,8 @@
 name: version-command
 
 on:
-  workflow_dispatch:
-    inputs:
-      bump:
-        description: "SemVer bump"
-        required: true
-        type: choice
-        options: [patch, minor, major]
-      ref:
-        description: "The branch this workflow file runs from (dispatcher supplied)"
-        required: true
-        type: string
-      target:
-        description: "PR head branch to update (dispatcher supplied)"
-        required: true
-        type: string
+  repository_dispatch:
+    types: [version-bump]
 
 permissions:
   contents: write
@@ -27,7 +14,7 @@ jobs:
       - name: Checkout PR head branch (use PAT so push re-triggers CI)
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.target }}
+          ref: ${{ github.event.client_payload.target }}
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PAT }}
 
@@ -43,11 +30,11 @@ jobs:
 
       - name: Apply npm version bump (no tag)
         run: |
-          npm version ${{ inputs.bump }} --no-git-tag-version -m "chore(version): %s"
+          npm version ${{ github.event.client_payload.bump }} --no-git-tag-version -m "chore(version): %s"
 
       - name: Commit & push
         run: |
-          git config user.name  "github-actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json || true
           git commit -m "chore(version)" || echo "No changes"
