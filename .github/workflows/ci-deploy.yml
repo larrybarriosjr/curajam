@@ -362,8 +362,8 @@ jobs:
             - _Triggered by:_ @${context.actor}
             - _Workflow:_ \`${context.workflow}\`
             - _Run:_ [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) _If you re-run the workflow, this comment will update automatically._ ✨
-            `;
             </details>
+            `;
 
             const comment_id = parseInt(process.env.STATUS_COMMENT_ID, 10);
             if (!comment_id) { core.setFailed('STATUS_COMMENT_ID is missing'); return; }
