@@ -39,8 +39,8 @@ jobs:
             * **Report Links Comment**: 🔸 pending
             * **Release**: 🔸 pending
 
-            _Workflow_: \`${context.workflow}\`
-            _Run_: ${context.runNumber}
+            _Workflow:_ \`${context.workflow}\`
+            _Run:_ [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) _If you re-run the workflow, this comment will update automatically._ ✨
             `;
 
             const created = await github.rest.issues.createComment({
@@ -223,6 +223,8 @@ jobs:
     needs: test
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     outputs:
       version: ${{ steps.version.outputs.version }}
       finished_at: ${{ steps.finished.outputs.finished_at }}
@@ -359,7 +361,7 @@ jobs:
 
             - _Triggered by:_ @${context.actor}
             - _Workflow:_ \`${context.workflow}\`
-            - _Run_: [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) _If you re-run the workflow, this comment will update automatically._ ✨
+            - _Run:_ [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) _If you re-run the workflow, this comment will update automatically._ ✨
             `;
             </details>
 
