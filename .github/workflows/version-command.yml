@@ -1,5 +1,4 @@
 name: version-command
-
 on:
   repository_dispatch:
     types: [version-bump]
@@ -10,6 +9,10 @@ permissions:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout PR head branch (use PAT so push re-triggers CI)
         uses: actions/checkout@v4
@@ -35,7 +38,7 @@ jobs:
       - name: Commit & push chore(version)
         run: |
           set -e
-          git config user.name  "github-actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json || true
 
@@ -52,21 +55,17 @@ jobs:
       - name: Version result (update PR comment)
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.RELEASE_PAT }}
           script: |
-            const owner    = context.repo.owner;
-            const repo     = context.repo.repo;
-
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
             const prNumber = context.payload.client_payload?.pr_number;
             if (!prNumber) {
               core.setFailed('Missing pr_number in repository_dispatch.client_payload');
               return;
             }
-
-            const MARKER  = '<!-- pr-version-marker -->';
+            const MARKER = '<!-- pr-version-marker -->';
             const version = '${{ steps.version_post.outputs.version }}';
-            const tag     = `v${version}`;
-
+            const tag = `v${version}`;
             const ackId = context.payload.client_payload?.ack_comment_id;
 
             const body = `${MARKER}
@@ -98,8 +97,6 @@ jobs:
             const originalCommentId = context.payload.client_payload?.comment_id;
             if (originalCommentId) {
               await github.rest.reactions.createForIssueComment({
-                owner, repo,
-                comment_id: originalCommentId,
-                content: 'hooray'
+                owner, repo, comment_id: originalCommentId, content: 'hooray'
               });
             }
