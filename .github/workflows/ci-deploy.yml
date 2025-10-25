@@ -121,7 +121,7 @@ jobs:
 
       - id: finished
         run: |
-          echo "finished_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+          echo "finished_at=$(date -u +'%Y-%m-%d %H:%M:%S UTC (%a)')" >> "$GITHUB_OUTPUT"
 
   comment:
     name: 4 - Report Links Comment
@@ -350,9 +350,9 @@ jobs:
             <details>
             <summary>ℹ️ Checks</summary>
 
-            - **Test & Build**: ✅ passed at ${{ needs.test.outputs.finished_at }}
-            - **Report Links Comment**: ✅ passed at ${{ needs.comment.outputs.finished_at }}
-            - **Release**: ✅ passed at ${{ needs.comment.outputs.finished_at }}
+            - **Test & Build**: ✅ finished at ${{ needs.test.outputs.finished_at }}
+            - **Report Links Comment**: ✅ finished at ${{ needs.comment.outputs.finished_at }}
+            - **Release**: ✅ finished at ${{ needs.comment.outputs.finished_at }}
 
             </details>
 
