@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1761391819784" clover="3.2.0">
-  <project timestamp="1761391819784" name="All files">
+<coverage generated="1761392575842" clover="3.2.0">
+  <project timestamp="1761392575842" name="All files">
     <metrics statements="158" coveredstatements="0" conditionals="18" coveredconditionals="2" methods="18" coveredmethods="2" elements="194" coveredelements="4" complexity="0" loc="158" ncloc="158" packages="9" files="18" classes="18"/>
     <package name="curajam">
       <metrics statements="14" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
